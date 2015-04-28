@@ -1,4 +1,5 @@
 source hobbylistdb-schema.sql;
+
 insert into users values('ruben', MD5('ruben'), 'Ruben', 'ruben@acme.com');
 insert into user_roles values ('ruben', 'registered');
 

@@ -21,6 +21,7 @@ create table movies (
 	movieid 			int not null auto_increment primary key,
 	title 				varchar(100) not null,
 	tag 				varchar(20) not null,
+	username 			varchar(20) not null,
 	last_modified			timestamp default current_timestamp ON UPDATE CURRENT_TIMESTAMP,
 	creation_timestamp		datetime not null default current_timestamp,
 	foreign key(username) 		references users(username)
@@ -30,6 +31,7 @@ create table books (
 	bookid 				int not null auto_increment primary key,
 	title 				varchar(100) not null,
 	tag 				varchar(20) not null,
+	username 			varchar(20) not null,
 	last_modified			timestamp default current_timestamp ON UPDATE CURRENT_TIMESTAMP,
 	creation_timestamp		datetime not null default current_timestamp,
 	foreign key(username) 		references users(username)
@@ -39,6 +41,7 @@ create table games (
 	gameid 				int not null auto_increment primary key,
 	title 				varchar(100) not null,
 	tag 				varchar(20) not null,
+	username 			varchar(20) not null,
 	last_modified			timestamp default current_timestamp ON UPDATE CURRENT_TIMESTAMP,
 	creation_timestamp		datetime not null default current_timestamp,
 	foreign key(username) 		references users(username)
