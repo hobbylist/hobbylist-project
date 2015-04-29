@@ -16,7 +16,7 @@ import edu.upc.eetac.dsa.rubenpg.hobbylist.api.MovieResource;
  
 public class Movie {
 	@InjectLinks({
-			@InjectLink(resource = MovieResource.class, style = Style.ABSOLUTE, rel = "movies", title = "Movies Collection", type = MediaType.HOBBYLIST_API_MOVIE_COLLECTION),
+			@InjectLink(resource = MovieResource.class, style = Style.ABSOLUTE, rel = "movies", title = "Latest movies", type = MediaType.HOBBYLIST_API_MOVIE_COLLECTION),
 			@InjectLink(resource = MovieResource.class, style = Style.ABSOLUTE, rel = "self edit", title = "Movie", type = MediaType.HOBBYLIST_API_MOVIE, method = "getMovie", bindings = @Binding(name = "movieid", value = "${instance.movieid}")) })
 	private List<Link> links;
 	private int movieid;

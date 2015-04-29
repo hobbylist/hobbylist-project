@@ -20,7 +20,7 @@
         <url-pattern>/*</url-pattern>
     </servlet-mapping>
     
-     <filter>
+<filter>
 	<!-- The CORS filter with parameters -->
 	<filter-name>CORS</filter-name>
 	<filter-class>com.thetransactioncompany.cors.CORSFilter</filter-class>
@@ -73,6 +73,42 @@
 	<!-- CORS Filter mapping -->
 	<filter-name>CORS</filter-name>
 	<url-pattern>/*</url-pattern>
-	</filter-mapping>
+</filter-mapping>
+
+<login-config>
+	<auth-method>BASIC</auth-method>
+	<!-- <realm-name>westerios</realm-name> -->
+</login-config>
+<security-role>
+	<role-name>registered</role-name>
+</security-role>
+ 
+<security-constraint>
+	<web-resource-collection>
+		<web-resource-name>HobbylistRootAPI</web-resource-name>
+		<url-pattern>/*</url-pattern>
+	</web-resource-collection>
+</security-constraint>
+ 
+<security-constraint>
+	<web-resource-collection>
+		<web-resource-name>Movies</web-resource-name>
+		<url-pattern>/movies/*</url-pattern>
+		<http-method>GET</http-method>
+	</web-resource-collection>
+</security-constraint>
+ 
+<security-constraint>
+	<web-resource-collection>
+		<web-resource-name>Movies</web-resource-name>
+		<url-pattern>/movies/*</url-pattern>
+		<http-method>POST</http-method>
+		<http-method>PUT</http-method>
+		<http-method>DELETE</http-method>
+	</web-resource-collection>
+	<auth-constraint>
+		<role-name>registered</role-name>
+	</auth-constraint>
+</security-constraint>
 	
 </web-app>
