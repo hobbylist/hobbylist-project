@@ -7,9 +7,11 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import javax.sql.DataSource;
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -58,7 +60,8 @@ public class MovieResource {
 			}
 			
 		} catch (SQLException e) {
-			e.printStackTrace();
+			throw new ServerErrorException(e.getMessage(),
+					Response.Status.INTERNAL_SERVER_ERROR);
 		} finally {
 			try {
 				if (stmt != null)
@@ -83,7 +86,8 @@ public class MovieResource {
 		try {
 			conn = ds.getConnection();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			throw new ServerErrorException("Could not connect to the database",
+					Response.Status.SERVICE_UNAVAILABLE);
 		}
 	 
 		PreparedStatement stmt = null;
@@ -100,9 +104,13 @@ public class MovieResource {
 						.getTime());
 				movie.setCreationTimestamp(rs
 						.getTimestamp("creation_timestamp").getTime());
-			}
+			} else {
+				throw new NotFoundException("There's no movie with movieid="
+				+ movieid);
+				}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			throw new ServerErrorException(e.getMessage(),
+					Response.Status.INTERNAL_SERVER_ERROR);
 		} finally {
 			try {
 				if (stmt != null)
@@ -122,11 +130,13 @@ public class MovieResource {
 	@Consumes(MediaType.HOBBYLIST_API_MOVIE)
 	@Produces(MediaType.HOBBYLIST_API_MOVIE)
 	public Movie createMovie(Movie movie) {
+		validateMovie(movie);
 		Connection conn = null;
 		try {
 			conn = ds.getConnection();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			throw new ServerErrorException("Could not connect to the database",
+					Response.Status.SERVICE_UNAVAILABLE);
 		}
 	 
 		PreparedStatement stmt = null;
@@ -147,7 +157,8 @@ public class MovieResource {
 				// Something has failed...
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			throw new ServerErrorException(e.getMessage(),
+					Response.Status.INTERNAL_SERVER_ERROR);
 		} finally {
 			try {
 				if (stmt != null)
@@ -169,7 +180,8 @@ public class MovieResource {
 		try {
 			conn = ds.getConnection();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			throw new ServerErrorException("Could not connect to the database",
+					Response.Status.SERVICE_UNAVAILABLE);
 		}
 	 
 		PreparedStatement stmt = null;
@@ -178,9 +190,12 @@ public class MovieResource {
 			stmt.setInt(1, Integer.valueOf(movieid));
 	 
 			int rows = stmt.executeUpdate();
-			if (rows == 0);
+			if (rows == 0)
+				throw new NotFoundException("There's no movie with movieid="
+						+ movieid);
 		} catch (SQLException e) {
-			e.printStackTrace();
+			throw new ServerErrorException(e.getMessage(),
+					Response.Status.INTERNAL_SERVER_ERROR);
 		} finally {
 			try {
 				if (stmt != null)
@@ -198,11 +213,13 @@ public class MovieResource {
 	@Consumes(MediaType.HOBBYLIST_API_MOVIE)
 	@Produces(MediaType.HOBBYLIST_API_MOVIE)
 	public Movie updateMovie(@PathParam("movieid") String movieid, Movie movie) {
+		validateUpdateMovie(movie);
 		Connection conn = null;
 		try {
 			conn = ds.getConnection();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			throw new ServerErrorException("Could not connect to the database",
+					Response.Status.SERVICE_UNAVAILABLE);
 		}
 	 
 		PreparedStatement stmt = null;
@@ -216,11 +233,13 @@ public class MovieResource {
 			if (rows == 1)
 				movie = getMovie(movieid);
 			else {
-				;// Updating inexistent sting
+				throw new NotFoundException("There's no movie with movieid="
+						+ movieid);
 			}
 	 
 		} catch (SQLException e) {
-			e.printStackTrace();
+			throw new ServerErrorException(e.getMessage(),
+					Response.Status.INTERNAL_SERVER_ERROR);
 		} finally {
 			try {
 				if (stmt != null)
@@ -232,4 +251,24 @@ public class MovieResource {
 	 
 		return movie;
 		}
+	
+	private void validateMovie(Movie movie) {
+		if (movie.getTitle() == null)
+			throw new BadRequestException("Title can't be null.");
+		if (movie.getTag() == null)
+			throw new BadRequestException("Tag can't be null.");
+		if (movie.getTitle().length() > 100)
+			throw new BadRequestException("Title can't be greater than 100 characters.");
+		if (movie.getTag().length() > 20)
+			throw new BadRequestException("Tag can't be greater than 20 characters.");
+	}
+	
+	private void validateUpdateMovie(Movie movie) {
+		if (movie.getTitle() != null && movie.getTitle().length() > 100)
+			throw new BadRequestException(
+					"Title can't be greater than 100 characters.");
+		if (movie.getTag() != null && movie.getTag().length() > 20)
+			throw new BadRequestException(
+					"Tag can't be greater than 20 characters.");
+	}
 }
