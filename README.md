@@ -1,0 +1,1 @@
+Voy a crear el proyecto con las carpetas www y sql. Primera versión con myresource funcionando.
