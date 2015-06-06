@@ -4,19 +4,16 @@ $.ajaxSetup({
     headers: { 'Authorization': "Basic "}
 });
 
-$("#btnLogin").click(function(e){
-    login();   
-});
-
 $("#btnRegister").click(function(e){
-    window.location="register.html";   
+    register();   
 });
 
-function login(){
+
+function register(){
     $("#result").text('');
-    var url = API_BASE_URL + "/hobbylist-api/users/login";
+    var url = API_BASE_URL + "/hobbylist-api/users/";
     console.log(url);
-    var usuario = {username:$("#name").val(), password:$("#password").val()};
+    var usuario = {username:$("#username").val(), password:$("#password").val(), name:$("#name").val(), email:$("#email").val()};
     var data = JSON.stringify(usuario);
     
     $.ajax({
@@ -27,19 +24,16 @@ function login(){
         contentType: 'application/vnd.hobbylist.api.user+json',
 		data : data,
 	}).done(function(data, status, jqxhr) {			
-        if(data.loginSuccessful == true){
-            $.cookie('username', $("#name").val());
-            $.cookie('password', $("#password").val());
-            $.cookie();
-            window.location="index.html";
-        }else{
-            $.removeCookie('username');
-            $.removeCookie('password');  
+       if(data.status == 409)
+        {
             $(("#result")).html('<div class="alert alert-danger"> <strong>Oh!</strong> Nombre de usuario y contraseña ya usados </div>');
         }
+        else
+        {
+            window.location="login.html";
+        }
+    
   	}).fail(function() {
-            $.removeCookie('username');
-            $.removeCookie('password');  
             $(("#result")).html('<div class="alert alert-danger"> <strong>Oh!</strong> Nombre de usuario y contraseña ya usados </div>');
 	});
 }
